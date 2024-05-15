@@ -1,0 +1,5 @@
+base/
+**/app/jar/
+**/app/lib/
+**/app/classes/
+.idea

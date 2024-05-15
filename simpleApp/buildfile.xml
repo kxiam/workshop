@@ -1,0 +1,59 @@
+<project name="MyProject" default="main" basedir="./app">
+
+<path id="classpath">
+<fileset dir="${basedir}">
+<include name="lib/*.jar" />
+</fileset>
+</path>
+
+<target name="compile">
+<mkdir dir="classes"/>
+<javac includeantruntime="false" srcdir="src" destdir="classes" classpathref="classpath"/>
+</target>
+
+<target name="copy-dependencies">
+<mkdir dir="jar/lib" />
+<jar jarfile="jar/lib/dependencies-all.jar">
+<zipgroupfileset dir="lib">
+<include name="*.jar" />
+</zipgroupfileset>
+</jar>
+</target>
+
+<target name="jar" depends="compile, copy-dependencies">
+<mkdir dir="jar"/>
+<jar destfile="jar/SimpleApp.jar" basedir="classes">
+<manifest>
+<attribute name="Main-Class" value="de.jk.SimpleApp"/>
+</manifest>
+<zipfileset src="jar/lib/dependencies-all.jar" excludes="META-INF/*.SF"/>
+</jar>
+</target>
+
+<target name="run" depends="jar">
+<java jar="jar/SimpleApp.jar" fork="true">
+</java>
+</target>
+
+<target name="clean" description="clean up">
+<delete dir="classes" />
+<delete dir="jar" />
+</target>
+
+
+
+
+<target name="download-dependencies">
+<get 
+dest="./lib" 
+verbose="true"
+skipexisting="true">
+<url url="https://repo1.maven.org/maven2/org/springframework/spring-context/6.1.6/spring-context-6.1.6.jar"/>
+<url url="https://repo1.maven.org/maven2/org/springframework/spring-web/6.1.6/spring-web-6.1.6.jar"/>
+<url url="https://repo1.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
+<url url="https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar"/>
+</get>
+</target>
+
+<target name="main" depends="download-dependencies,clean,compile,jar,run" />
+</project>
